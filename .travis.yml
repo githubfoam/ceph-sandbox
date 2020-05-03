@@ -26,8 +26,8 @@ jobs:
           - vagrant version
           - sudo vagrant plugin install vagrant-libvirt
           - sudo vagrant plugin install vagrant-mutate
-          # - sudo vagrant plugin install vagrant-cachier
-          # - sudo vagrant plugin install vagrant-hostmanager
+          - sudo vagrant plugin install vagrant-cachier
+          - sudo vagrant plugin install vagrant-hostmanager
           - sudo vagrant status
           - sudo virsh list --all #show all running KVM/libvirt VMs
           - sudo vagrant box add "generic/ubuntu1604" --provider=libvirt
