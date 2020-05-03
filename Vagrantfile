@@ -2,7 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "generic/ubuntu1804"
+  # config.vm.box = "generic/ubuntu1804"
+  config.vm.box = "generic/ubuntu1604"
   config.ssh.forward_agent = true
   config.ssh.insert_key = false
   config.hostmanager.enabled = true
