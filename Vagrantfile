@@ -3,25 +3,25 @@ DOMAIN_NAME = "dw002.home"
 # Defines the specifications for the nodes being deployed.
 nodes = [
     # Deploy a server for running services such as ansible for configuration deployment.
-    {:base_name => "srv", 
-     :num_vms => "1", 
-     :box => "ubuntu/bionic64", 
+    {:base_name => "srv",
+     :num_vms => "1",
+     :box => "ubuntu/bionic64",
      :cpu => "1",
      :ram => "512",
      :networks => [{:name => "ceph_net01", :base_ip => "192.168.20.10"}]},
-    
+
     # Deploy Monitor servers for the Ceph Cluster.
-    {:base_name => "mon", 
-     :num_vms => "3", 
-     :box => "ubuntu/bionic64", 
+    {:base_name => "mon",
+     :num_vms => "3",
+     :box => "ubuntu/bionic64",
      :cpu => "1",
      :ram => "512",
      :networks => [{:name => "ceph_net01", :base_ip => "192.168.20.20"}]},
-    
+
     # Deploy OSD servers for the Ceph cluster.
-    {:base_name => "osd", 
-     :num_vms => "5", 
-     :box => "ubuntu/bionic64", 
+    {:base_name => "osd",
+     :num_vms => "5",
+     :box => "ubuntu/bionic64",
      :cpu => "1",
      :ram => "1024",
      :disks => {:num => "3", :size => "20480"},
@@ -58,7 +58,7 @@ Vagrant.configure("2") do |config|
 
                     # Disable the audio controller, not needed
                     vb.customize ["modifyvm", :id, "--audio", "none"]
-                  
+
                     # Add disks to the node if defined
                     if node.has_key?(:disks)
                         (2..node[:disks][:num].to_i + 1).each do |dskid|
@@ -80,8 +80,8 @@ Vagrant.configure("2") do |config|
                     end
                 end
 
-                nodecfg.ssh.insert_key = false
-                nodecfg.ssh.private_key_path = ["keys/id_rsa", "~/.vagrant.d/insecure_private_key"]
+                # nodecfg.ssh.insert_key = false
+                # nodecfg.ssh.private_key_path = ["keys/id_rsa", "~/.vagrant.d/insecure_private_key"]
 		if node_name.include?("srv01")
                     nodecfg.vm.provision :shell, inline: <<-EOC
 		        sudo apt-get update
@@ -93,15 +93,15 @@ Vagrant.configure("2") do |config|
 			sudo systemctl restart dnsmasq.service
                     EOC
 		end
-                nodecfg.vm.provision :file,
-                    source: "keys/id_rsa",
-                    destination: "/home/vagrant/.ssh/id_rsa"
-                nodecfg.vm.provision :file,
-                    source: "keys/id_rsa.pub",
-                    destination: "/home/vagrant/.ssh/id_rsa.pub"
-                nodecfg.vm.provision :file,
-                    source: "keys/id_rsa.pub",
-                    destination: "/home/vagrant/.ssh/authorized_keys"
+                # nodecfg.vm.provision :file,
+                #     source: "keys/id_rsa",
+                #     destination: "/home/vagrant/.ssh/id_rsa"
+                # nodecfg.vm.provision :file,
+                #     source: "keys/id_rsa.pub",
+                #     destination: "/home/vagrant/.ssh/id_rsa.pub"
+                # nodecfg.vm.provision :file,
+                #     source: "keys/id_rsa.pub",
+                #     destination: "/home/vagrant/.ssh/authorized_keys"
                 nodecfg.vm.provision :shell, inline: <<-EOC
                     chmod 600 /home/vagrant/.ssh/id_rsa
                     chmod 644 /home/vagrant/.ssh/id_rsa.pub
@@ -114,4 +114,3 @@ Vagrant.configure("2") do |config|
         end
     end
  end
-
