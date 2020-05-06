@@ -1,0 +1,41 @@
+---
+
+- hosts: ceph
+  serial: 1
+  become: true
+  strategy: linear
+  roles:
+    - base
+  pre_tasks:
+    - name: Ensure gitmodules update
+      local_action: command git submodule update --init --recursive
+
+- hosts: mons
+  gather_facts: false
+  become: true
+  roles:
+    - ceph-defaults
+    - ceph-common
+    - ceph-config
+    - ceph-mon
+
+- hosts: osds
+  gather_facts: false
+  become: true
+  roles:
+    - ceph-defaults
+    - ceph-common
+    - ceph-config
+    - ceph-osd
+
+- hosts: clients
+  gather_facts: false
+  become: true
+  roles:
+    - ceph-defaults
+    - ceph-common
+    - ceph-config
+    - ceph-client
+    - role: rbd-create
+      tags:
+        - rbd
