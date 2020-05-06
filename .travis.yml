@@ -27,7 +27,7 @@ jobs:
           - vagrant version
           - echo "============================================="
           - sudo vagrant plugin install vagrant-libvirt #The vagrant-libvirt plugin is required when using KVM on Linux
-          - sudo vagrant plugin install vagrant-mutate
+          - sudo vagrant plugin install vagrant-mutate #Convert vagrant boxes to work with different providers
           # - sudo vagrant plugin install vagrant-cachier #plugin for caching packages that are downloaded while setting up the  environment
           # - sudo vagrant plugin install vagrant-vbguest #plugin enables guest support for some VirtualBox features like shared folders
           # - sudo vagrant plugin install vagrant-hostmanager #
@@ -38,8 +38,8 @@ jobs:
           - vagrant box list #veridy installed boxes
           - vagrant status #Check the status of the VMs to see that none of them have been created yet
           - sudo vagrant global-status
-          # - sudo vagrant up --provider=libvirt
-          - travis_wait 40 sudo vagrant up --provider=libvirt --no-parallel # No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
+          - travis_wait 40 sudo vagrant up --provider=libvirt
+          # - travis_wait 40 sudo vagrant up --provider=libvirt --no-parallel # No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
           # - sudo vagrant up --provider=libvirt k8s-head
           - sudo vagrant status
           - sudo vagrant global-status
