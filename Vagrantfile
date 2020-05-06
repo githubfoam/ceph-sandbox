@@ -10,9 +10,9 @@ nodes = [
 ]
 
 Vagrant.configure("2") do |config|
-  config.ssh.insert_key = false
+  # config.ssh.insert_key = false
   # config.ssh.private_key_path = "~/.ssh/id_rsa"
-  config.ssh.forward_agent = true
+  # config.ssh.forward_agent = true
 
   # check_guest_additions = false
   # functional_vboxsf = false
@@ -39,11 +39,12 @@ Vagrant.configure("2") do |config|
         end
       end
 
-      config.hostmanager.enabled = true
-      config.hostmanager.manage_guest = true
+      # config.hostmanager.enabled = true
+      # config.hostmanager.manage_guest = true
 
       if node[:hostname] == "client1"
         nodeconfig.vm.provision "ansible" do |ansible|
+          ansible.compatibility_mode = "2.0"
           ansible.playbook = "ansible/playbook.yml"
           ansible.inventory_path = "ansible/inventory"
           ansible.verbose = true
