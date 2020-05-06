@@ -25,15 +25,15 @@ jobs:
           - sudo wget -nv https://releases.hashicorp.com/vagrant/${VAGRANT_VERSION}/vagrant_${VAGRANT_VERSION}_x86_64.deb
           - sudo dpkg -i vagrant_${VAGRANT_VERSION}_x86_64.deb
           - vagrant version
-          - echo "=============================================
+          - echo "=============================================="
           - sudo vagrant plugin install vagrant-libvirt
           - sudo vagrant plugin install vagrant-mutate
           # - sudo vagrant plugin install vagrant-cachier
           - sudo vagrant plugin install vagrant-hostmanager
           - sudo vagrant status
           - sudo virsh list --all #show all running KVM/libvirt VMs
-          - sudo vagrant box add "ubuntu/bionic64"
-          - sudo vagrant mutate "ubuntu/bionic64" libvirt
+          - sudo vagrant box add "bento/ubuntu-16.04"
+          - sudo vagrant mutate "bento/ubuntu-16.04" libvirt
           - vagrant box list #veridy installed boxes
           - vagrant status #Check the status of the VMs to see that none of them have been created yet
           - sudo vagrant global-status
