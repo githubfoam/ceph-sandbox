@@ -4,18 +4,18 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 config.vm.box = "ubuntu/xenial64"
-config.vm.boot_timeout = 120
+config.vm.boot_timeout = 480
 config.vm.synced_folder '.', '/vagrant', disabled: true
 
 config.vm.provider "virtualbox" do |vb|
     # Customize the amount of memory on the VM:
-    vb.memory = "1024"
+    vb.memory = "4096"
 end
 
 
 config.vm.define "admin" do |admin|
     admin.vm.network "private_network", ip: "192.168.77.5"
-    
+
     admin.vm.provision "ansible" do |ansible|
         ansible.playbook="ansible/admin.yml"
         # Run commands as root.
