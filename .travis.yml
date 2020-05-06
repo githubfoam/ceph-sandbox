@@ -32,8 +32,8 @@ jobs:
           # - sudo vagrant plugin install vagrant-hostmanager
           - sudo vagrant status
           - sudo virsh list --all #show all running KVM/libvirt VMs
-          - sudo vagrant box add "ubuntu/xenial64"
-          - sudo vagrant mutate "ubuntu/xenial64" libvirt
+          - sudo vagrant box add "ubuntu/bionic64"
+          - sudo vagrant mutate "ubuntu/bionic64" libvirt
           - vagrant box list #veridy installed boxes
           - vagrant status #Check the status of the VMs to see that none of them have been created yet
           - sudo vagrant global-status
