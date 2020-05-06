@@ -33,12 +33,12 @@ jobs:
           # - sudo vagrant plugin install vagrant-hostmanager #
           - sudo vagrant status
           - sudo virsh list --all #show all running KVM/libvirt VMs
-          - sudo vagrant box add "ubuntu/xenial64"
-          - sudo vagrant mutate "ubuntu/xenial64" libvirt
+          - sudo vagrant box add "bento/centos-7.6"
+          # - sudo vagrant mutate "ubuntu/xenial64" libvirt
           - vagrant box list #veridy installed boxes
           - vagrant status #Check the status of the VMs to see that none of them have been created yet
           - sudo vagrant global-status
-          - travis_wait 40 sudo vagrant up --provider=libvirt
+          - sudo vagrant up --provider=libvirt
           # - travis_wait 40 sudo vagrant up --provider=libvirt --no-parallel # No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
           # - sudo vagrant up --provider=libvirt k8s-head
           - sudo vagrant status
