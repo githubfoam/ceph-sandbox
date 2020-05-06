@@ -1,36 +1,85 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-Vagrant.configure("2") do |config|
-  # config.vm.box = "generic/ubuntu1804"
-  config.vm.box = "generic/ubuntu1604"
-  config.ssh.forward_agent = true
-  config.ssh.insert_key = false
-  config.hostmanager.enabled = true
-  config.cache.scope = :box
+config.vm.box = "ubuntu/xenial64"
+config.vm.boot_timeout = 120
+config.vm.synced_folder '.', '/vagrant', disabled: true
 
-  # We need one Ceph admin machine to manage the cluster
-  config.vm.define "ceph-admin" do |admin|
-    admin.vm.hostname = "ceph-admin"
-    admin.vm.network :private_network, ip: "172.21.12.10"
-    admin.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq ntp ceph-deploy", :privileged => true
-  end
+config.vm.provider "virtualbox" do |vb|
+    # Customize the amount of memory on the VM:
+    vb.memory = "1024"
+end
 
-  # The Ceph client will be our client machine to mount volumes and interact with the cluster
-  config.vm.define "ceph-client" do |client|
-    client.vm.hostname = "ceph-client"
-    client.vm.network :private_network, ip: "172.21.12.11"
-    # ceph-deploy will assume remote machines have python2 installed
-    config.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq python", :privileged => true
-  end
 
-  # We provision three nodes to be Ceph servers
-  (1..3).each do |i|
-    config.vm.define "ceph-server-#{i}" do |config|
-      config.vm.hostname = "ceph-server-#{i}"
-      config.vm.network :private_network, ip: "172.21.12.#{i+11}"
-      # ceph-deploy will assume remote machines have python2 installed
-      config.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq python", :privileged => true
+config.vm.define "admin" do |admin|
+    admin.vm.network "private_network", ip: "192.168.77.5"
+    
+    admin.vm.provision "ansible" do |ansible|
+        ansible.playbook="ansible/admin.yml"
+        # Run commands as root.
+        ansible.become = true
     end
-  end
+end
+
+
+config.vm.define "node1" do |node1|
+    node1.vm.network "private_network", ip: "192.168.77.10"
+    node1.vm.hostname = "node1"
+    node1.vm.provider :virtualbox do |vb|
+        file_to_disk = 'node1.vdi'
+        unless File.exist?(file_to_disk)
+            # 20 GB
+            vb.customize ['createhd', '--filename', file_to_disk, '--size', 20 * 1024]
+        end
+        vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+    end
+    node1.vm.provision "ansible" do |ansible|
+        ansible.playbook="ansible/node_master.yml"
+        # Run commands as root.
+        ansible.become = true
+    end
+end
+
+config.vm.define "node2" do |node2|
+    node2.vm.network "private_network", ip: "192.168.77.20"
+    node2.vm.hostname = "node2"
+    node2.vm.provider :virtualbox do |vb|
+        file_to_disk = 'node2.vdi'
+        unless File.exist?(file_to_disk)
+            # 20 GB
+            vb.customize ['createhd', '--filename', file_to_disk, '--size', 20 * 1024]
+        end
+        vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+    end
+    node2.vm.provision "ansible" do |ansible|
+        ansible.playbook="ansible/node.yml"
+        # Run commands as root.
+        ansible.become = true
+    end
+end
+
+config.vm.define "node3" do |node3|
+    node3.vm.network "private_network", ip: "192.168.77.30"
+    node3.vm.hostname = "node3"
+    node3.vm.provider :virtualbox do |vb|
+        file_to_disk = 'node3.vdi'
+        unless File.exist?(file_to_disk)
+            # 20 GB
+            vb.customize ['createhd', '--filename', file_to_disk, '--size', 20 * 1024]
+        end
+        vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+    end
+    node3.vm.provision "ansible" do |ansible|
+        ansible.playbook="ansible/node.yml"
+        # Run commands as root.
+        ansible.become = true
+     end
+end
+
+
+
+
+
 end

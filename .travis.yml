@@ -6,7 +6,7 @@ rvm:
   - 2.7
 env:
   global:
-  - VAGRANT_VERSION="2.2.7"
+  - VAGRANT_VERSION="2.2.8"
 before_install:
   - sudo apt-get -qq update
 jobs:
@@ -20,24 +20,28 @@ jobs:
           - sudo addgroup libvirtd
           - sudo adduser  $(id -un) libvirtd #ensure that your username is added to the group libvirtd
           - sudo kvm-ok
-          - sudo apt-get install -y bridge-utils dnsmasq-base ebtables libvirt-bin libvirt-dev qemu-kvm qemu-utils ruby-dev
+          - echo "============================================="
+          - echo "=============Installing Vagrant=============="
           - sudo wget -nv https://releases.hashicorp.com/vagrant/${VAGRANT_VERSION}/vagrant_${VAGRANT_VERSION}_x86_64.deb
           - sudo dpkg -i vagrant_${VAGRANT_VERSION}_x86_64.deb
           - vagrant version
+          - echo "=============================================
           - sudo vagrant plugin install vagrant-libvirt
           - sudo vagrant plugin install vagrant-mutate
-          - sudo vagrant plugin install vagrant-cachier
-          - sudo vagrant plugin install vagrant-hostmanager
+          # - sudo vagrant plugin install vagrant-cachier
+          # - sudo vagrant plugin install vagrant-hostmanager
           - sudo vagrant status
           - sudo virsh list --all #show all running KVM/libvirt VMs
-          - sudo vagrant box add "generic/ubuntu1604" --provider=libvirt
+          - sudo vagrant box add "ubuntu/xenial64"
+          - sudo vagrant mutate "ubuntu/xenial64" libvirt
           - vagrant box list #veridy installed boxes
           - vagrant status #Check the status of the VMs to see that none of them have been created yet
+          - sudo vagrant global-status
           - sudo vagrant up --provider=libvirt
           # - sudo vagrant up --provider=libvirt k8s-head
           - sudo vagrant status
           - sudo vagrant global-status
-          - sudo vagrant ssh ceph-admin -c "hostnamectl status"
+          # - sudo vagrant ssh ceph-admin -c "hostnamectl status"
           - sudo virsh list --all #show all running KVM/libvirt VMs
 after_success:
     - stage: Finalize
